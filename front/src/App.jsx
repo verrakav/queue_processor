@@ -7,9 +7,9 @@ export default function App() {
   const [number, setNumber] = useState(4);
   // NOTE true for dev
   const [isPlaceActive, setIsPlaceActive] = useState(true);
-  // to pass on to courts
-  const [players, setPlayers] = useState("");
-  const [queue, setQueue] = useState("");
+  //supposed to be a pair to pass on to courts
+  const [players, setPlayers] = useState([]);
+  const [queue, setQueue] = useState([]);
 
   return (
     <>
@@ -66,23 +66,34 @@ function NumberInput({number, setNumber, isPlaceActive, setIsPlaceActive}) {
 function Court({number, isPlaceActive, players, setPlayers}) {
   // generates arr to render courts
   const myArray = Array.from({length: number}, (_, idx) => idx + 1);
+  // NOTE: think how to
+  const handleNextPair = () => {
+    const newPlayers = [
+      (players[0] = playersMale[0].name),
+      (players[1] = playersMale[1].name)
+    ];
+
+    setPlayers(newPlayers);
+  };
 
   return (
-    <div>
+    <>
       {isPlaceActive > 0 && (
-        <ul className="places">
+        <ul className="courts">
           {myArray.map((el, idx) => {
             return (
               <div className="place-item" key={idx}>
                 court num {el}
-                <p>X and Y are playing</p>
-                <Button className="btn-next">next pair</Button>
+                <p>{players.length < 1 ? "None assigned" : "X and Y are playing"} </p>
+                <Button onClick={() => handleNextPair(idx)} className="btn-next">
+                  next pair
+                </Button>
               </div>
             );
           })}
         </ul>
       )}
-    </div>
+    </>
   );
 }
 

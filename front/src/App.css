@@ -38,7 +38,7 @@
 }
 
 p,
-.places {
+.courts {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -49,7 +49,9 @@ p,
 .place-item {
   height: 9rem;
   width: 7rem;
-  border: solid 0.75rem;
+  border: solid 0.5rem;
+  padding: 0.5rem 0.25rem;
+  box-shadow: 0 1rem 1rem rgba(0, 0, 0, 0.3);
 }
 
 .players-container {
