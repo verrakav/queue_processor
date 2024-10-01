@@ -1,26 +1,45 @@
+import playersMale from "../dummies/dummy1";
 import "./App.css";
 import {useState} from "react";
 
 export default function App() {
-  const [number, setNumber] = useState("");
-  const [isPlaceActive, setIsPlaceActive] = useState(false);
+  // NOTE 4 for dev
+  const [number, setNumber] = useState(4);
+  // NOTE true for dev
+  const [isPlaceActive, setIsPlaceActive] = useState(true);
+  // to pass on to courts
+  const [players, setPlayers] = useState("");
+  const [queue, setQueue] = useState("");
 
   return (
-    <div className="container">
-      <NumberInput
-        number={number}
-        setNumber={setNumber}
-        isPlaceActive={isPlaceActive}
-        setIsPlaceActive={setIsPlaceActive}
-      />
-      <Place number={number} isPlaceActive={isPlaceActive} />
-    </div>
+    <>
+      <div className="container">
+        <NumberInput
+          number={number}
+          setNumber={setNumber}
+          isPlaceActive={isPlaceActive}
+          setIsPlaceActive={setIsPlaceActive}
+        />
+        <Court
+          number={number}
+          isPlaceActive={isPlaceActive}
+          players={players}
+          setPlayers={setPlayers}
+        />
+      </div>
+
+      <PlayersList />
+    </>
   );
 }
-
 function NumberInput({number, setNumber, isPlaceActive, setIsPlaceActive}) {
   const handleSubmit = e => {
     e.preventDefault();
+  };
+
+  const handleReset = () => {
+    setNumber(0);
+    setIsPlaceActive(false);
   };
 
   return (
@@ -38,20 +57,14 @@ function NumberInput({number, setNumber, isPlaceActive, setIsPlaceActive}) {
           generate
         </Button>
       </form>
+      <Button className="btn-reset" onClick={handleReset}>
+        RESET
+      </Button>
     </div>
   );
 }
-
-function Button({children, className, onClick}) {
-  return (
-    <button className={className} onClick={onClick}>
-      {children}
-    </button>
-  );
-}
-
-function Place({number, isPlaceActive}) {
-  //make arr with length of the input number
+function Court({number, isPlaceActive, players, setPlayers}) {
+  // generates arr to render courts
   const myArray = Array.from({length: number}, (_, idx) => idx + 1);
 
   return (
@@ -61,12 +74,35 @@ function Place({number, isPlaceActive}) {
           {myArray.map((el, idx) => {
             return (
               <div className="place-item" key={idx}>
-                Ima place nummer {el}
+                court num {el}
+                <p>X and Y are playing</p>
+                <Button className="btn-next">next pair</Button>
               </div>
             );
           })}
         </ul>
       )}
     </div>
+  );
+}
+
+function PlayersList() {
+  return (
+    <ul className="players-container">
+      {playersMale.map(el => {
+        return (
+          <li className="player" key={el.id}>
+            {el.name}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+function Button({children, className, onClick}) {
+  return (
+    <button className={className} onClick={onClick}>
+      {children}
+    </button>
   );
 }
