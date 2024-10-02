@@ -4,12 +4,9 @@ import {useState} from "react";
 
 export default function App() {
   // NOTE 4 for dev
-  const [number, setNumber] = useState(4);
+  const [number, setNumber] = useState("");
   // NOTE true for dev
-  const [isPlaceActive, setIsPlaceActive] = useState(true);
-  //supposed to be a pair to pass on to courts
-  const [players, setPlayers] = useState([]);
-  const [queue, setQueue] = useState([]);
+  const [isPlaceActive, setIsPlaceActive] = useState(false);
 
   return (
     <>
@@ -20,12 +17,7 @@ export default function App() {
           isPlaceActive={isPlaceActive}
           setIsPlaceActive={setIsPlaceActive}
         />
-        <Court
-          number={number}
-          isPlaceActive={isPlaceActive}
-          players={players}
-          setPlayers={setPlayers}
-        />
+        <Court number={number} isPlaceActive={isPlaceActive} />
       </div>
 
       <PlayersList />
@@ -63,18 +55,9 @@ function NumberInput({number, setNumber, isPlaceActive, setIsPlaceActive}) {
     </div>
   );
 }
-function Court({number, isPlaceActive, players, setPlayers}) {
+function Court({number, isPlaceActive}) {
   // generates arr to render courts
   const myArray = Array.from({length: number}, (_, idx) => idx + 1);
-  // NOTE: think how to
-  const handleNextPair = () => {
-    const newPlayers = [
-      (players[0] = playersMale[0].name),
-      (players[1] = playersMale[1].name)
-    ];
-
-    setPlayers(newPlayers);
-  };
 
   return (
     <>
@@ -84,10 +67,8 @@ function Court({number, isPlaceActive, players, setPlayers}) {
             return (
               <div className="place-item" key={idx}>
                 court num {el}
-                <p>{players.length < 1 ? "None assigned" : "X and Y are playing"} </p>
-                <Button onClick={() => handleNextPair(idx)} className="btn-next">
-                  next pair
-                </Button>
+                <p>None assigned</p>
+                <Button className="btn-next">next pair</Button>
               </div>
             );
           })}
