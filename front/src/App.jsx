@@ -3,10 +3,11 @@ import "./App.css";
 import {useState} from "react";
 
 export default function App() {
-  // NOTE 4 for dev
-  const [number, setNumber] = useState("");
-  // NOTE true for dev
-  const [isPlaceActive, setIsPlaceActive] = useState(false);
+  // NOTE 4 for dev | manages the number of courts
+  const [number, setNumber] = useState(4);
+  // NOTE true for dev | manages the initial court render (supposed to be used once)
+  const [isPlaceActive, setIsPlaceActive] = useState(true);
+  //need a state to track which court is selected
 
   return (
     <>
@@ -59,17 +60,30 @@ function Court({number, isPlaceActive}) {
   // generates arr to render courts
   const myArray = Array.from({length: number}, (_, idx) => idx + 1);
 
+  //toggle btn choice
+  const [selectedCourt, setSelectedCourt] = useState();
+  //changes the content
+  const [players, setPlayers] = useState("Moe and Joe");
+
   return (
     <>
       {isPlaceActive > 0 && (
         <ul className="courts">
           {myArray.map((el, idx) => {
             return (
-              <div className="place-item" key={idx}>
+              <li className="place-item" key={idx}>
                 court num {el}
-                <p>None assigned</p>
-                <Button className="btn-next">next pair</Button>
-              </div>
+                <p>{selectedCourt === idx ? players : "None assigned"}</p>
+                <Button
+                  idx={idx}
+                  onClick={() => {
+                    if (selectedCourt) setSelectedCourt(idx);
+                    else setSelectedCourt(idx);
+                  }}
+                  className="btn-next">
+                  next pair
+                </Button>
+              </li>
             );
           })}
         </ul>
