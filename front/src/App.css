@@ -11,6 +11,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: row;
+  box-sizing: border-box;
+  column-gap: 3rem;
 }
 
 .form {
@@ -70,4 +73,9 @@ p,
 
 .player {
   padding: 0.5rem;
+}
+
+.error-msg {
+  display: flex;
+  /* margin: 5rem; */
 }
