@@ -1,7 +1,7 @@
-// import playersMale from "../dummies/dummy1";
 import "./App.css";
 import {useState} from "react";
 import {PlayersProvider, usePlayers} from "./Context/Players";
+import playersMale from "../dummies/dummy1";
 
 export default function App() {
   // NOTE 4 for dev | manages the number of courts
@@ -9,13 +9,6 @@ export default function App() {
   // NOTE true for dev | manages the initial court render (supposed to be used once)
   const [showCourts, setShowCourts] = useState(true);
 
-  // function getPairs(playersArr) {
-  //   const pairedPlayers = playersArr.reduce((acc, cur, idx) => {
-  //     if (idx % 2 === 0) acc.push([cur]);
-  //     else acc[acc.length - 1].push(cur);
-  //   }, []);
-  //   return pairedPlayers;
-  // }
   const handleReset = () => {
     setNumber(0);
     setShowCourts(false);
@@ -24,7 +17,7 @@ export default function App() {
   return (
     <PlayersProvider>
       <div className="container">
-        <CourtSetup
+        <CourtForm
           number={number}
           setNumber={setNumber}
           showCourts={showCourts}
@@ -41,7 +34,7 @@ export default function App() {
   );
 }
 
-function CourtSetup({number, setNumber, showCourts, setShowCourts}) {
+function CourtForm({number, setNumber, showCourts, setShowCourts}) {
   const handleSubmit = e => {
     e.preventDefault();
   };
@@ -63,35 +56,83 @@ function CourtSetup({number, setNumber, showCourts, setShowCourts}) {
   );
 }
 
-function Courts({number, showCourts, players}) {
-  //need a state to track which court is selected
-  const [selectedCourt, setSelectedCourt] = useState();
+function Courts({number, showCourts}) {
+  const [selectedCourt, setSelectedCourt] = useState(null);
+  const [queues, setQueues] = useState(Array(number).fill([]));
+  // const [queueNumber, setQueueNumber] = useState(null);
+  // const [queueContent, setQueueContent] = useState([]);
+  /*a queue is an arr of obj: 
+  [
+    {queueNumber: 1, queueContent: [{name: 'Jo'...}, {name: 'Mike'}]},
+    {queueNumber: 2, queueContent: [{name: 'Phil'}, {name: 'Bart'}]}
+  ]
+  
+    // const handleXperiment = el => {
+    //   setQueue(prevQueue => [...prevQueue, {queueNumber: el, queueContent: "hi"}]);
+    // };
+  */
+  // const handleQueueNumber = idx => {
+  //   setQueueNumber(idx);
+  // };
+  // const handleQueueContent = queueNumber => {
+  //   setQueueContent(prev => [...prev, players]);
+  // };
+  // accessing players context
+  // const {players} = usePlayers();
+  const players = playersMale;
 
+  // NOTE:
+  const handleAssignPlayers = idx => {
+    setQueues(prev => {
+      const upadtedQueues = [...prev];
+      const newPair = players.slice(idx, idx + 2);
+      upadtedQueues[idx] = [...upadtedQueues[idx], ...newPair];
+      return upadtedQueues;
+    });
+  };
+  const handleNextPair = idx => {
+    setQueues(prev => {
+      const updatedQueues = [...prev];
+      updatedQueues[idx].shift();
+      players.shift();
+      return updatedQueues;
+    });
+  };
   // generates arr to render courts
   const myArray = Array.from({length: number}, (_, idx) => idx + 1);
 
   return (
     <>
       {showCourts && number > 0 && (
-        <ul className="courts">
+        <div className="courts">
           {myArray.map((el, idx) => {
             return (
-              <li className="place-item" key={idx}>
+              <Court className={"place-item"} key={idx}>
                 court num {el}
-                <p>{selectedCourt === idx ? players : "None assigned"}</p>
+                <p>
+                  {queues[idx] && queues[idx].length > 0
+                    ? queues[idx].map(player => player.name).join(", ")
+                    : "None assigned"}
+                </p>
                 <Button
                   idx={idx}
                   onClick={() => {
-                    if (selectedCourt) setSelectedCourt(idx);
-                    else setSelectedCourt(idx);
+                    setSelectedCourt(idx);
+                    handleAssignPlayers(idx);
                   }}
+                  className="btn-next">
+                  set players
+                </Button>
+                <Button
+                  idx={idx}
+                  onClick={() => handleNextPair(idx)}
                   className="btn-next">
                   next pair
                 </Button>
-              </li>
+              </Court>
             );
           })}
-        </ul>
+        </div>
       )}
       {/* useEffect to show it correctly? */}
       {/* {number <= 0 && <ErrorMessage />} */}
@@ -100,7 +141,7 @@ function Courts({number, showCourts, players}) {
 }
 
 function PlayersContainer() {
-  //keeps track of players yet to play
+  //keeps track of all players yet to play
   const {players, dispatch} = usePlayers();
   const [player, setPlayer] = useState({
     name: "",
@@ -116,7 +157,6 @@ function PlayersContainer() {
     e.preventDefault();
     dispatch({type: "ADD_PLAYER", payload: player});
     setPlayer({name: "", category: "", phoneNumber: ""});
-    // console.log(players);
   };
 
   return (
@@ -176,4 +216,7 @@ function Button({children, className, onClick}) {
 
 function ErrorMessage() {
   return <span className="error-msg">Opps, did you enter a number?</span>;
+}
+function Court({children, className}) {
+  return <div className={className}>{children}</div>;
 }
