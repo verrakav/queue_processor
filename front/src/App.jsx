@@ -1,13 +1,13 @@
-import playersMale from "../dummies/dummy1";
+// import playersMale from "../dummies/dummy1";
 import "./App.css";
-import {useState, useReducer} from "react";
+import {useState} from "react";
+import {PlayersProvider, usePlayers} from "./Context/Players";
 
 export default function App() {
   // NOTE 4 for dev | manages the number of courts
   const [number, setNumber] = useState(4);
   // NOTE true for dev | manages the initial court render (supposed to be used once)
   const [showCourts, setShowCourts] = useState(true);
-  // const [players, setPlayers] = useState(playersMale);
 
   // function getPairs(playersArr) {
   //   const pairedPlayers = playersArr.reduce((acc, cur, idx) => {
@@ -22,7 +22,7 @@ export default function App() {
   };
 
   return (
-    <>
+    <PlayersProvider>
       <div className="container">
         <CourtSetup
           number={number}
@@ -37,7 +37,7 @@ export default function App() {
       <Button className="btn-reset" onClick={handleReset}>
         RESET
       </Button>
-    </>
+    </PlayersProvider>
   );
 }
 
@@ -99,20 +99,9 @@ function Courts({number, showCourts, players}) {
   );
 }
 
-//NOTE: reducer setup
-const initialState = [];
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "ADD_PLAYER":
-      return [...state, {...action.payload, id: state.length + 1}];
-    default:
-      return new Error("Non-existent action type");
-  }
-};
-
 function PlayersContainer() {
   //keeps track of players yet to play
-  const [players, dispatch] = useReducer(reducer, initialState);
+  const {players, dispatch} = usePlayers();
   const [player, setPlayer] = useState({
     name: "",
     category: "",
