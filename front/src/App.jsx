@@ -4,35 +4,45 @@ import {useState} from "react";
 
 export default function App() {
   // NOTE 4 for dev | manages the number of courts
-  const [number, setNumber] = useState(4);
+  const [number, setNumber] = useState(0);
   // NOTE true for dev | manages the initial court render (supposed to be used once)
-  const [isPlaceActive, setIsPlaceActive] = useState(true);
-  //need a state to track which court is selected
+  const [showCourts, setShowCourts] = useState(false);
+  //changes the content
+  const [players, setPlayers] = useState(playersMale);
+
+  function getPairs(playersArr) {
+    const pairedPlayers = playersArr.reduce((acc, cur, idx) => {
+      if (idx % 2 === 0) acc.push([cur]);
+      else acc[acc.length - 1].push(cur);
+    }, []);
+    return pairedPlayers;
+  }
 
   return (
     <>
       <div className="container">
-        <NumberInput
+        <CourtSetup
           number={number}
           setNumber={setNumber}
-          isPlaceActive={isPlaceActive}
-          setIsPlaceActive={setIsPlaceActive}
+          showCourts={showCourts}
+          setShowCourts={setShowCourts}
         />
-        <Court number={number} isPlaceActive={isPlaceActive} />
+        <Courts number={number} showCourts={showCourts} players={players} />
       </div>
 
       <PlayersList />
     </>
   );
 }
-function NumberInput({number, setNumber, isPlaceActive, setIsPlaceActive}) {
+
+function CourtSetup({number, setNumber, showCourts, setShowCourts}) {
   const handleSubmit = e => {
     e.preventDefault();
   };
 
   const handleReset = () => {
     setNumber(0);
-    setIsPlaceActive(false);
+    setShowCourts(false);
   };
 
   return (
@@ -44,9 +54,7 @@ function NumberInput({number, setNumber, isPlaceActive, setIsPlaceActive}) {
           value={number}
           onChange={e => setNumber(e.target.value)}
         />
-        <Button
-          className={"btn-generate"}
-          onClick={() => setIsPlaceActive(!isPlaceActive)}>
+        <Button className={"btn-generate"} onClick={() => setShowCourts(!showCourts)}>
           generate
         </Button>
       </form>
@@ -56,18 +64,16 @@ function NumberInput({number, setNumber, isPlaceActive, setIsPlaceActive}) {
     </div>
   );
 }
-function Court({number, isPlaceActive}) {
+function Courts({number, showCourts, players}) {
+  //need a state to track which court is selected
+  const [selectedCourt, setSelectedCourt] = useState();
+
   // generates arr to render courts
   const myArray = Array.from({length: number}, (_, idx) => idx + 1);
 
-  //toggle btn choice
-  const [selectedCourt, setSelectedCourt] = useState();
-  //changes the content
-  const [players, setPlayers] = useState("Moe and Joe");
-
   return (
     <>
-      {isPlaceActive > 0 && (
+      {showCourts && number > 0 && (
         <ul className="courts">
           {myArray.map((el, idx) => {
             return (
@@ -88,6 +94,8 @@ function Court({number, isPlaceActive}) {
           })}
         </ul>
       )}
+      {/* useEffect to show it correctly? */}
+      {/* {number <= 0 && <ErrorMessage />} */}
     </>
   );
 }
@@ -105,10 +113,15 @@ function PlayersList() {
     </ul>
   );
 }
+
 function Button({children, className, onClick}) {
   return (
     <button className={className} onClick={onClick}>
       {children}
     </button>
   );
+}
+
+function ErrorMessage() {
+  return <span className="error-msg">Opps, did you enter a number?</span>;
 }

@@ -48,11 +48,12 @@ button {
   font-family: inherit;
   background-color: #063970;
   cursor: pointer;
-  transition: border-color 0.25s;
   box-shadow: 0.2rem 0.2rem rgba(0, 0, 0, 0.3);
+  transition: all 0.2s;
 }
+
 button:hover {
-  border-color: #063970;
+  transform: skewX(10deg);
 }
 button:focus,
 button:focus-visible {
@@ -64,8 +65,16 @@ input {
   background-color: #063970;
   padding: 0.5rem;
   box-shadow: 0.2rem 0.2rem rgba(0, 0, 0, 0.3);
+  appearance: textfield;
+  outline: none;
+  transition: all 0.2s;
 }
 
+input:focus {
+  outline: 3px solid #e28743;
+  outline-offset: -2px;
+  transform: skewX(10deg);
+}
 label {
   margin-bottom: 1.25rem;
   text-transform: uppercase;
