@@ -1,22 +1,35 @@
 import playersMale from "../dummies/dummy1";
 import "./App.css";
-import {useState} from "react";
+import {useState, useReducer} from "react";
+
+const initialState = playersMale;
+const reducer = (state, action) => {
+  switch (action) {
+    case "ADD_PLAYER":
+      return;
+  }
+};
 
 export default function App() {
   // NOTE 4 for dev | manages the number of courts
-  const [number, setNumber] = useState(0);
+  const [number, setNumber] = useState(4);
   // NOTE true for dev | manages the initial court render (supposed to be used once)
-  const [showCourts, setShowCourts] = useState(false);
-  //changes the content
-  const [players, setPlayers] = useState(playersMale);
+  const [showCourts, setShowCourts] = useState(true);
+  //keeps track of players yet to play
+  const [players, displatch] = useReducer(reducer, initialState);
+  // const [players, setPlayers] = useState(playersMale);
 
-  function getPairs(playersArr) {
-    const pairedPlayers = playersArr.reduce((acc, cur, idx) => {
-      if (idx % 2 === 0) acc.push([cur]);
-      else acc[acc.length - 1].push(cur);
-    }, []);
-    return pairedPlayers;
-  }
+  // function getPairs(playersArr) {
+  //   const pairedPlayers = playersArr.reduce((acc, cur, idx) => {
+  //     if (idx % 2 === 0) acc.push([cur]);
+  //     else acc[acc.length - 1].push(cur);
+  //   }, []);
+  //   return pairedPlayers;
+  // }
+  const handleReset = () => {
+    setNumber(0);
+    setShowCourts(false);
+  };
 
   return (
     <>
@@ -30,7 +43,10 @@ export default function App() {
         <Courts number={number} showCourts={showCourts} players={players} />
       </div>
 
-      <PlayersList />
+      <PlayersContainer />
+      <Button className="btn-reset" onClick={handleReset}>
+        RESET
+      </Button>
     </>
   );
 }
@@ -38,11 +54,6 @@ export default function App() {
 function CourtSetup({number, setNumber, showCourts, setShowCourts}) {
   const handleSubmit = e => {
     e.preventDefault();
-  };
-
-  const handleReset = () => {
-    setNumber(0);
-    setShowCourts(false);
   };
 
   return (
@@ -58,12 +69,10 @@ function CourtSetup({number, setNumber, showCourts, setShowCourts}) {
           generate
         </Button>
       </form>
-      <Button className="btn-reset" onClick={handleReset}>
-        RESET
-      </Button>
     </div>
   );
 }
+
 function Courts({number, showCourts, players}) {
   //need a state to track which court is selected
   const [selectedCourt, setSelectedCourt] = useState();
@@ -100,17 +109,34 @@ function Courts({number, showCourts, players}) {
   );
 }
 
-function PlayersList() {
+function PlayersContainer() {
   return (
-    <ul className="players-container">
-      {playersMale.map(el => {
-        return (
-          <li className="player" key={el.id}>
-            {el.name}
-          </li>
-        );
-      })}
-    </ul>
+    <>
+      <div className="players-container">
+        {/* form to get players */}
+        <form className="form-new-player">
+          <label>Name</label>
+          <input type="text" />
+
+          <label>Category</label>
+          <input type="text" />
+
+          <label>Phone Number</label>
+          <input type="text" />
+          <Button className={"btn-generate"}>Add player!</Button>
+        </form>
+        {/* show players next to the form */}
+        <ul>
+          {playersMale.map(el => {
+            return (
+              <li className="player" key={el.id}>
+                {el.name}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </>
   );
 }
 

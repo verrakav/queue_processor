@@ -70,6 +70,10 @@ input {
   transition: all 0.2s;
 }
 
+input:not(:last-child) {
+  margin-bottom: 2.5rem;
+}
+
 input:focus {
   outline: 3px solid #e28743;
   outline-offset: -2px;
