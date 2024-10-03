@@ -48,6 +48,7 @@
   font-size: small;
   padding: 0.25rem;
   color: #eeeee4;
+  margin: 0.25rem;
 }
 
 p,
@@ -61,7 +62,7 @@ p,
 }
 
 .place-item {
-  height: 9rem;
+  height: 10rem;
   width: 7rem;
   border: solid 0.5rem;
   padding: 0.5rem 0.25rem;
@@ -80,6 +81,7 @@ p,
 
 .player {
   padding: 0.5rem;
+  font-weight: 600;
 }
 
 .error-msg {
