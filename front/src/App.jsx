@@ -1,6 +1,13 @@
 import "./App.css";
+//components
+import Button from "./components/Button";
+import CourtForm from "./components/CourtForms";
+import NewPlayerForm from "./components/NewPlayerForm";
+import PlayersList from "./components/PlayersList";
+//hooks
 import {useState} from "react";
 import {PlayersProvider, usePlayers} from "./Context/Players";
+//mock data
 import playersMale from "../dummies/dummy1";
 
 export default function App() {
@@ -9,50 +16,31 @@ export default function App() {
   // NOTE true for dev | manages the initial court render (supposed to be used once)
   const [showCourts, setShowCourts] = useState(true);
 
-  const handleReset = () => {
-    setNumber(0);
-    setShowCourts(false);
-  };
+  //NOTE: DISCONNECTED
+  // const handleReset = () => {
+  //   setNumber(0);
+  //   setShowCourts(false);
+  // };
 
   return (
     <PlayersProvider>
       <div className="container">
-        <CourtForm
+        {/*NOTE: DISCONNECTED form <CourtForm
           number={number}
           setNumber={setNumber}
           showCourts={showCourts}
           setShowCourts={setShowCourts}
-        />
+        /> */}
         <Courts number={number} showCourts={showCourts} />
       </div>
 
-      <PlayersContainer />
+      {/*/*NOTE: DISCONNECTED form <PlayersContainer /> 
       <Button className="btn-reset" onClick={handleReset}>
         RESET
-      </Button>
+      </Button>*/}
+      <Button className={"btn-reset"}>add 1 player to the queue</Button>
+      <Button className={"btn-generate"}> add all players to the queues</Button>
     </PlayersProvider>
-  );
-}
-
-function CourtForm({number, setNumber, showCourts, setShowCourts}) {
-  const handleSubmit = e => {
-    e.preventDefault();
-  };
-
-  return (
-    <div className="sidebar">
-      <form className="form" onSubmit={handleSubmit}>
-        <label>Enter number of courts</label>
-        <input
-          type="number"
-          value={number}
-          onChange={e => setNumber(e.target.value)}
-        />
-        <Button className={"btn-generate"} onClick={() => setShowCourts(!showCourts)}>
-          generate
-        </Button>
-      </form>
-    </div>
   );
 }
 
@@ -78,10 +66,10 @@ function Courts({number, showCourts}) {
   //   setQueueContent(prev => [...prev, players]);
   // };
   // accessing players context
-  // const {players} = usePlayers();
-  const players = playersMale;
+  const {players} = usePlayers();
+  // const players = playersMale;
 
-  // NOTE:
+  // NOTE: DISCONNECTED || prob will be changed
   const handleAssignPlayers = idx => {
     setQueues(prev => {
       const upadtedQueues = [...prev];
@@ -98,7 +86,8 @@ function Courts({number, showCourts}) {
       return updatedQueues;
     });
   };
-  // generates arr to render courts
+
+  //NOTE: generates arr to render courts || DISCONNECTED
   const myArray = Array.from({length: number}, (_, idx) => idx + 1);
 
   return (
@@ -110,11 +99,13 @@ function Courts({number, showCourts}) {
               <Court className={"place-item"} key={idx}>
                 court num {el}
                 <p>
-                  {queues[idx] && queues[idx].length > 0
+                  {/* TODO: make a component for queue? */}
+                  {/* {queues[idx] && queues[idx].length > 0
                     ? queues[idx].map(player => player.name).join(", ")
-                    : "None assigned"}
+                    : "None assigned"} */}
                 </p>
-                <Button
+                {/*NOTE: DISCONNECTED || might get rid of it altogether
+                 <Button
                   idx={idx}
                   onClick={() => {
                     setSelectedCourt(idx);
@@ -122,7 +113,7 @@ function Courts({number, showCourts}) {
                   }}
                   className="btn-next">
                   set players
-                </Button>
+                </Button> */}
                 <Button
                   idx={idx}
                   onClick={() => handleNextPair(idx)}
@@ -140,83 +131,19 @@ function Courts({number, showCourts}) {
   );
 }
 
+// NOTE: DISCONNECTED up in the <App/>
 function PlayersContainer() {
-  //keeps track of all players yet to play
+  // //keeps track of all players yet to play
   const {players, dispatch} = usePlayers();
-  const [player, setPlayer] = useState({
-    name: "",
-    category: "",
-    phoneNumber: ""
-  });
-
-  const handleChange = e => {
-    setPlayer({...player, [e.target.name]: e.target.value});
-  };
-
-  const handlePlayerSubmit = e => {
-    e.preventDefault();
-    dispatch({type: "ADD_PLAYER", payload: player});
-    setPlayer({name: "", category: "", phoneNumber: ""});
-  };
 
   return (
-    <>
-      <div className="players-container">
-        {/* form to get players */}
-        {/* NOTE: extract into a separate comp? NewPlayerForm*/}
-        <form className="form-new-player" onSubmit={handlePlayerSubmit}>
-          <label>Name</label>
-          <input
-            type="text"
-            name="name"
-            value={player.name}
-            onChange={handleChange}
-          />
-
-          <label>Category</label>
-          <input
-            type="text"
-            name="category"
-            value={player.category}
-            onChange={handleChange}
-          />
-
-          <label>Phone Number</label>
-          <input
-            type="text"
-            name="phoneNumber"
-            value={player.phoneNumber}
-            onChange={handleChange}
-          />
-          <Button className={"btn-generate"}>Add player!</Button>
-        </form>
-        {/* show players next to the form */}
-        {/* NOTE: extract into a separate comp? PlayersList*/}
-        <ul>
-          {players.map(player => {
-            return (
-              <li className="player" key={player.id}>
-                {player.name}
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-    </>
+    <div className="players-container">
+      <NewPlayerForm dispatch={dispatch} />
+      <PlayersList players={players} />
+    </div>
   );
 }
 
-function Button({children, className, onClick}) {
-  return (
-    <button className={className} onClick={onClick}>
-      {children}
-    </button>
-  );
-}
-
-function ErrorMessage() {
-  return <span className="error-msg">Opps, did you enter a number?</span>;
-}
 function Court({children, className}) {
   return <div className={className}>{children}</div>;
 }
