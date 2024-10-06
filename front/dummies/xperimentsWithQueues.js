@@ -111,7 +111,7 @@ const queuesFilled = [
 ];
 
 //NOTE: func to check the shortest q length use the num for the slicing
-// returns the length of the queue
+// returns the length of the queue which is === the idx to start slicing
 function findShortestQueue(queues) {
   const shortesQueue = queues.reduce(
     (acc, curVal) =>
@@ -120,34 +120,25 @@ function findShortestQueue(queues) {
   ).queueItems.length;
   return shortesQueue;
 }
+// console.trace("Trace log from here");
+
 console.log(findShortestQueue(queuesFilled));
 
 //NOTE: func get slices of qs (for updating state)    sliced = queues[i].queueItems.slice(2);
+function queueSlicer(queues) {
+  let slicedCollection = [];
+  const idxStart = findShortestQueue(queues);
+
+  for (let i = 0; i < queues.length; i++) {
+    slicedCollection.push(queues[i].queueItems.slice(idxStart));
+    // console.log(slicedCollection);
+  }
+  return slicedCollection;
+}
+console.log(queueSlicer(queuesFilled));
 
 // NOTE:
 function redestributeQueues(queues) {
-  // const items = queues.queueItems;
-  let tempQ = [];
-  let slicingCollection = [];
-  for (let i = 0; i < queues.length; i++) {
-    //check every Q for length
-    let sliced = [];
-    if (queues[i].queueItems.length > 3) {
-      sliced = queues[i].queueItems.slice(2);
-      slicingCollection.push(sliced);
-      /* if length < 3 take a slice  
-        make vars for the slices
-        the slice from idx 3 to the end*/
-      console.log(slicingCollection);
-      console.log("++++++++++++++++++++");
-    }
-    console.log(sliced);
-  }
-  //merge the slices keeping the order = temporaryQueue
-  //use addAllToQueues in the temporaryQueue
-  // console.dir(queuesFilled, {depth: null, name: true});
-  console.log("++++++++++++++++++++");
-
   return queues;
 }
 
