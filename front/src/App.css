@@ -2,9 +2,12 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
-  text-align: center;
   display: flex;
-  flex-direction: column;
+  /* NOTE: my disconnected styling */
+  /* flex-direction: column; */
+  /* text-align: center; */
+  flex-direction: row;
+  flex-wrap: wrap;
 }
 
 .container {
@@ -59,6 +62,9 @@ p,
   flex-wrap: wrap;
   gap: 0.5rem;
   column-gap: 0.75rem;
+  /* dev purposes */
+  color: #e28743;
+  margin-top: 5rem;
 }
 
 .place-item {

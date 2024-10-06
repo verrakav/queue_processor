@@ -10,39 +10,140 @@ import {PlayersProvider, usePlayers} from "./Context/Players";
 //mock data
 import playersMale from "../dummies/dummy1";
 
-export default function App() {
-  // NOTE 4 for dev | manages the number of courts
-  const [number, setNumber] = useState(4);
-  // NOTE true for dev | manages the initial court render (supposed to be used once)
-  const [showCourts, setShowCourts] = useState(true);
+// Initialize players with assignedToQueue property
+const playersMaleUpdated = playersMale.map(e => {
+  e.assignedToQueue = false;
+  return e;
+});
 
-  //NOTE: DISCONNECTED
-  // const handleReset = () => {
-  //   setNumber(0);
-  //   setShowCourts(false);
-  // };
+// Initial queue setup
+const initialQueues = [
+  {queueNumber: 1, queueItems: []},
+  {queueNumber: 2, queueItems: []},
+  {queueNumber: 3, queueItems: []},
+  {queueNumber: 4, queueItems: []}
+];
+
+const App = () => {
+  const [queues, setQueues] = useState(initialQueues);
+  const [players, setPlayers] = useState(playersMaleUpdated);
+
+  // Function to add a player to a queue
+  const addItemToQueue = (item, queueIndex) => {
+    const newQueues = [...queues];
+    const newPlayers = [...players];
+
+    newPlayers[item.id - 1].assignedToQueue = true;
+    newQueues[queueIndex].queueItems.push(newPlayers[item.id - 1]);
+
+    setPlayers(newPlayers);
+    setQueues(newQueues);
+  };
+
+  // Function to add all players to the queues
+  const addAllToQueues = () => {
+    const newQueues = [...queues];
+    const totalItems = players.length;
+    let queueIndex = 0;
+
+    for (let i = 0; i < totalItems; i++) {
+      if (queueIndex === newQueues.length) queueIndex = 0;
+      addItemToQueue(players[i], queueIndex);
+      queueIndex++;
+    }
+  };
+
+  // Function to progress a queue one step
+  const progressQueueOneStep = queueIndex => {
+    const newQueues = [...queues];
+    newQueues[queueIndex].queueItems.shift();
+    setQueues(newQueues);
+  };
 
   return (
-    <PlayersProvider>
-      <div className="container">
-        {/*NOTE: DISCONNECTED form <CourtForm
-          number={number}
-          setNumber={setNumber}
-          showCourts={showCourts}
-          setShowCourts={setShowCourts}
-        /> */}
-        <Courts number={number} showCourts={showCourts} />
+    <div>
+      <h1>Queue Management</h1>
+
+      <div className="players-container">
+        <h2>Players</h2>
+        {players.map(player => (
+          <div key={player.id}>
+            {player.name}{" "}
+            {!player.assignedToQueue && (
+              <button
+                onClick={() => addItemToQueue(player, 0)} // Add to first queue as an example
+              >
+                Add to Queue 1
+              </button>
+            )}
+          </div>
+        ))}
       </div>
 
-      {/*/*NOTE: DISCONNECTED form <PlayersContainer /> 
-      <Button className="btn-reset" onClick={handleReset}>
-        RESET
-      </Button>*/}
-      <Button className={"btn-reset"}>add 1 player to the queue</Button>
-      <Button className={"btn-generate"}> add all players to the queues</Button>
-    </PlayersProvider>
+      <div className="courts">
+        <h2>Queues</h2>
+        {queues.map((queue, index) => (
+          <div key={queue.queueNumber}>
+            <h3>Queue {queue.queueNumber}</h3>
+            {queue.queueItems.length > 0 ? (
+              <ul>
+                {queue.queueItems.map((item, idx) => (
+                  <li key={idx}>{item.name}</li>
+                ))}
+              </ul>
+            ) : (
+              <p>No items in queue</p>
+            )}
+            <button className="btn-reset" onClick={() => progressQueueOneStep(index)}>
+              Progress Queue
+            </button>
+          </div>
+        ))}
+      </div>
+
+      <button className="btn-reset" onClick={addAllToQueues}>
+        Add All Players to Queues
+      </button>
+    </div>
   );
-}
+};
+
+export default App;
+
+//NOTE: MY VERSION here NOTE:
+// export default function App() {
+//   // NOTE 4 for dev | manages the number of courts
+//   const [number, setNumber] = useState(4);
+//   // NOTE true for dev | manages the initial court render (supposed to be used once)
+//   const [showCourts, setShowCourts] = useState(true);
+
+//   //NOTE: DISCONNECTED
+//   // const handleReset = () => {
+//   //   setNumber(0);
+//   //   setShowCourts(false);
+//   // };
+
+//   return (
+//     <PlayersProvider>
+//       <div className="container">
+//         {/*NOTE: DISCONNECTED form <CourtForm
+//           number={number}
+//           setNumber={setNumber}
+//           showCourts={showCourts}
+//           setShowCourts={setShowCourts}
+//         /> */}
+//         <Courts number={number} showCourts={showCourts} />
+//       </div>
+
+//       {/*/*NOTE: DISCONNECTED form <PlayersContainer />
+//       <Button className="btn-reset" onClick={handleReset}>
+//         RESET
+//       </Button>*/}
+//       <Button className={"btn-reset"}>add 1 player to the queue</Button>
+//       <Button className={"btn-generate"}> add all players to the queues</Button>
+//     </PlayersProvider>
+//   );
+// }
 
 function Courts({number, showCourts}) {
   const [selectedCourt, setSelectedCourt] = useState(null);
@@ -86,8 +187,7 @@ function Courts({number, showCourts}) {
       return updatedQueues;
     });
   };
-
-  //NOTE: generates arr to render courts || DISCONNECTED
+  // generates arr to render courts || DISCONNECTED
   const myArray = Array.from({length: number}, (_, idx) => idx + 1);
 
   return (
