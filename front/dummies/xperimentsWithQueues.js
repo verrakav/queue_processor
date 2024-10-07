@@ -7,7 +7,9 @@
 import playersMale from "./dummy1.js";
 
 const playersMaleUpdated = playersMale.map(e => {
+  // default fields in the db
   e.assignedToQueue = false;
+  e.finished = false;
   return e;
 });
 // console.log(playersMaleUpdated);
@@ -50,9 +52,9 @@ function addAllToQueues(items, queues) {
     addItemToQueue(items[i], queues[j]);
     j++;
   }
-  // a node thing to cl the full content of objs
   console.dir(queues, {depth: null, name: true});
-  // console.log("++++++++++++++++++++");
+  // a node thing to cl the full content of objs
+  console.log("++++++++++++++++++++");
   return queues;
 }
 
@@ -85,20 +87,20 @@ const queuesFilled = [
     queueItems: [
       {id: 1, name: "Jo", category: "male", phoneNumber: "0495 333 222"},
       {id: 2, name: "Mike", category: "male", phoneNumber: "0495 321 123"},
-      {id: 3, name: "Phil", category: "male", phoneNumber: "0455 535 321"}
-      // {id: 4, name: "Bart", category: "female", phoneNumber: "0465 565 623"},
-      // {id: 5, name: "Clive", category: "female", phoneNumber: "0444 434 341"},
-      // {id: 6, name: "Rick", category: "male", phoneNumber: "0455 905 900"},
-      // {id: 7, name: "Nick", category: "male", phoneNumber: "0475 396 099"}
+      {id: 3, name: "Phil", category: "male", phoneNumber: "0455 535 321"},
+      {id: 4, name: "Bart", category: "female", phoneNumber: "0465 565 623"},
+      {id: 5, name: "Clive", category: "female", phoneNumber: "0444 434 341"},
+      {id: 6, name: "Rick", category: "male", phoneNumber: "0455 905 900"},
+      {id: 7, name: "Nick", category: "male", phoneNumber: "0475 396 099"}
     ]
   },
   {
     queueNumber: 2,
     // has 5
     queueItems: [
-      // {id: 8, name: "Moe", category: "male", phoneNumber: "0434 335 654"},
-      // {id: 9, name: "Alan", category: "male", phoneNumber: "0484 392 201"},
-      // {id: 10, name: "Jack", category: "male", phoneNumber: "0465 478 512"},
+      {id: 8, name: "Moe", category: "male", phoneNumber: "0434 335 654"},
+      {id: 9, name: "Alan", category: "male", phoneNumber: "0484 392 201"},
+      {id: 10, name: "Jack", category: "male", phoneNumber: "0465 478 512"}
       // {id: 11, name: "Kyle", category: "male", phoneNumber: "0493 372 282"},
       // {id: 12, name: "Dan", category: "male", phoneNumber: "0433 562 728"}
     ]
@@ -107,7 +109,7 @@ const queuesFilled = [
     queueNumber: 3,
     //  has 2
     queueItems: [
-      // {id: 13, name: "Chris", category: "male", phoneNumber: "0462 563 487"},
+      {id: 13, name: "Chris", category: "male", phoneNumber: "0462 563 487"}
       // {id: 14, name: "Ted", category: "male", phoneNumber: "0485 903 773"}
     ]
   }
@@ -142,9 +144,13 @@ function queueSlicer(queues) {
 }
 // console.log(queueSlicer(queuesFilled));
 
+// NOTE: extract the while loop into a func
+
 // NOTE: evens the queues
 function redestributeQueues(queues) {
   console.log(queues);
+  console.log("++++++++++++++++++++");
+
   //  array of arrays [ arr[1], arr[2]]
   const {stumps, slicedCollection} = queueSlicer(queues);
   // console.log(slicedCollection);
@@ -159,6 +165,7 @@ function redestributeQueues(queues) {
       }
     }
   }
+  console.log("tempQ", tempQ);
   // console.log("queues are: ", queues);
   // console.log("this is tempQ: ", tempQ, "& stumps", stumps);
   addAllToQueues(tempQ, stumps);

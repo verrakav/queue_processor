@@ -1,0 +1,18 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+}
+.item {
+  display: flex;
+  gap: 2rem;
+  background-color: #61dafbaa;
+  margin: 2rem;
+  padding: 1rem;
+}
